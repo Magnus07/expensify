@@ -1,11 +1,6 @@
-import React from 'react'
-import { Text } from 'react-native'
+import React from 'react';
+import AppNavigation from './navigation/appNavigation';
 
-interface Props {}
+const App = () => <AppNavigation />;
 
-const App = (props: Props) =>{
-
-  return (<><Text className="bg-red-700">Hello</Text></>)
-}
-
-export default App
+export default App;

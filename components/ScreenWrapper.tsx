@@ -3,9 +3,10 @@ import React, {ReactNode} from 'react';
 
 interface Props {
   children: ReactNode;
+  className: string;
 }
 
-export default function ScreenWrapper({children}: Props) {
+export default function ScreenWrapper({children, className}: Props) {
   const statusBarHeight = () => {
     if (StatusBar.currentHeight) {
       return StatusBar.currentHeight;
@@ -16,5 +17,9 @@ export default function ScreenWrapper({children}: Props) {
     return 0;
   };
 
-  return <View style={{paddingTop: statusBarHeight()}}>{children}</View>;
+  return (
+    <View className={className} style={{paddingTop: statusBarHeight()}}>
+      {children}
+    </View>
+  );
 }

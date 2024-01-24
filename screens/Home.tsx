@@ -3,6 +3,7 @@ import React from 'react';
 import ScreenWrapper from '../components/ScreenWrapper';
 import {colors} from '../theme';
 import randomImage from '../assets/images/randomImage';
+import EmptyList from '../components/EmptyList';
 
 const items = [
   {
@@ -75,10 +76,13 @@ export default function Home() {
         </View>
         <View className="h-[430px]">
           <FlatList
-            data={items}
+            data={[]}
             numColumns={2}
             keyExtractor={item => `${item.id}`}
             showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <EmptyList message="You haven't imported any trips yet." />
+            }
             columnWrapperStyle={{
               justifyContent: 'space-between',
             }}

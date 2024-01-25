@@ -19,9 +19,21 @@ export default function AppNavigation() {
           name={Routes.Home}
           component={Home}
         />
-        <Stack.Screen name={Routes.Login} component={Login} />
-        <Stack.Screen name={Routes.AddExpense} component={AddExpense} />
-        <Stack.Screen name={Routes.AddTrip} component={AddTrip} />
+        <Stack.Screen
+          name={Routes.Login}
+          options={{headerShown: false}}
+          component={Login}
+        />
+        <Stack.Screen
+          name={Routes.AddExpense}
+          options={{headerShown: false}}
+          component={AddExpense}
+        />
+        <Stack.Screen
+          name={Routes.AddTrip}
+          options={{headerShown: false}}
+          component={AddTrip}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

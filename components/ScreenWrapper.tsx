@@ -9,7 +9,7 @@ interface Props {
 export default function ScreenWrapper({children, className}: Props) {
   const statusBarHeight = () => {
     if (StatusBar.currentHeight) {
-      return StatusBar.currentHeight;
+      return StatusBar.currentHeight - 30;
     }
     if (Platform.OS === 'ios') {
       return 45;

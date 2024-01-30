@@ -52,6 +52,10 @@ const items = [
 
 export default function Home() {
   const navigation = useNavigation();
+
+  const handleTripItemPress = (place: string, country: string) => {
+    navigation.navigate(Routes.TripExpenses, {place, country});
+  };
   return (
     <ScreenWrapper className="flex-1">
       <View className="flex-row justify-between items-center p-4">
@@ -93,7 +97,11 @@ export default function Home() {
             }}
             className="mx-1"
             renderItem={item => (
-              <TouchableOpacity className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
+              <TouchableOpacity
+                className="bg-white rounded-2xl p-3 mb-3 shadow-sm"
+                onPress={() =>
+                  handleTripItemPress(item.item.place, item.item.country)
+                }>
                 <View>
                   <Image source={randomImage()} className="w-36 h-36" />
                   <Text className={`${colors.heading} font-bold`}>

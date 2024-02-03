@@ -6,6 +6,9 @@ export enum Routes {
   AddExpense = 'AddExpense',
   AddTrip = 'AddTrip',
   TripExpenses = 'TripExpenses',
+  Welcome = 'Welcome',
+  SignIn = 'SignIn',
+  SignUp = 'SignUp',
 }
 
 export type RootStackParamList = {
@@ -14,4 +17,7 @@ export type RootStackParamList = {
   AddExpense: undefined;
   AddTrip: undefined;
   TripExpenses: {place: string; country: string};
+  Welcome: undefined;
+  SignIn: undefined;
+  SignUp: undefined;
 };

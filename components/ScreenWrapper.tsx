@@ -12,7 +12,7 @@ export default function ScreenWrapper({children, className}: Props) {
       return StatusBar.currentHeight - 30;
     }
     if (Platform.OS === 'ios') {
-      return 45;
+      return 30; // 45
     }
     return 0;
   };

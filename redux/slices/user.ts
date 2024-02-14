@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 
 // Define a type for the slice state
 interface UserState {
-  user: {} | undefined;
+  user: any;
   isUserLoading: boolean;
 }
 
@@ -18,7 +18,7 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.user += action.payload;
+      state.user = action.payload;
     },
     setIsUserLoading: (state, action) => {
       state.isUserLoading = action.payload;

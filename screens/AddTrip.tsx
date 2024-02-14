@@ -12,11 +12,13 @@ import {colors} from '../theme';
 import BackIcon from '../components/BackIcon';
 import {useNavigation} from '@react-navigation/native';
 import {Routes} from '../navigation';
+import Loader from '../components/Loader';
 
 const AddTrip = () => {
   const [place, setPlace] = useState('');
   const [country, setCountry] = useState('');
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleButtonPress = () => {
     if (place && country) {
@@ -61,13 +63,17 @@ const AddTrip = () => {
           </View>
         </View>
         <View className="py-8">
-          <TouchableOpacity
-            className="bg-green-500 w-full rounded-full p-3"
-            onPress={handleButtonPress}>
-            <Text className="capitalize text-white font-bold text-lg text-center">
-              add trip
-            </Text>
-          </TouchableOpacity>
+          {isLoading ? (
+            <TouchableOpacity
+              className="bg-green-500 w-full rounded-full p-3"
+              onPress={handleButtonPress}>
+              <Text className="capitalize text-white font-bold text-lg text-center">
+                add trip
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <Loader />
+          )}
         </View>
       </View>
     </ScreenWrapper>

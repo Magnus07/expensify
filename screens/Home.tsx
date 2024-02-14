@@ -4,8 +4,10 @@ import ScreenWrapper from '../components/ScreenWrapper';
 import {colors} from '../theme';
 import randomImage from '../assets/images/randomImage';
 import EmptyList from '../components/EmptyList';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import {Routes} from '../navigation';
+import {signOut} from 'firebase/auth';
+import {auth} from '../config/firebase';
 
 const items = [
   {
@@ -56,13 +58,26 @@ export default function Home() {
   const handleTripItemPress = (place: string, country: string) => {
     navigation.navigate(Routes.TripExpenses, {place, country});
   };
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 1,
+        routes: [{name: Routes.Welcome}],
+      }),
+    );
+  };
+
   return (
     <ScreenWrapper className="flex-1">
       <View className="flex-row justify-between items-center p-4">
         <Text className={`{colors.heading} font-bold text-3xl shadow-sm`}>
           Expensify
         </Text>
-        <TouchableOpacity className="p-2 px-3 bg-white border border-gray-200 rounded-full">
+        <TouchableOpacity
+          className="p-2 px-3 bg-white border border-gray-200 rounded-full"
+          onPress={handleSignOut}>
           <Text className={colors.heading}>Logout</Text>
         </TouchableOpacity>
       </View>

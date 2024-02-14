@@ -10,13 +10,28 @@ import TripExpenses from '../screens/TripExpenses';
 import Welcome from '../screens/Welcome';
 import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../redux/store';
+import {onAuthStateChanged} from 'firebase/auth';
+import {setUser} from '../redux/slices/user';
+import {auth} from '../config/firebase';
+import {useEffect} from 'react';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigation() {
   const {user} = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+
+  // Handle user state changes
+  function onAuthStateChanged(u) {
+    dispatch(setUser(u ? u.toJSON() : u));
+  }
+
+  useEffect(() => {
+    const subscriber = auth.onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
 
   if (user) {
     return (
@@ -48,6 +63,10 @@ export default function AppNavigation() {
             component={SignUp}
             options={{presentation: 'modal'}}
           />
+          <Stack.Screen name={Routes.Home} component={Home} />
+          <Stack.Screen name={Routes.AddExpense} component={AddExpense} />
+          <Stack.Screen name={Routes.AddTrip} component={AddTrip} />
+          <Stack.Screen name={Routes.TripExpenses} component={TripExpenses} />
         </Stack.Navigator>
       </NavigationContainer>
     );

@@ -12,20 +12,47 @@ import ScreenWrapper from '../components/ScreenWrapper';
 import {colors} from '../theme';
 import BackIcon from '../components/BackIcon';
 import {useNavigation} from '@react-navigation/native';
-import {Routes} from '../navigation';
+import {RootStackParamList, Routes} from '../navigation';
 import {categories} from '../constants';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import Snackbar from 'react-native-snackbar';
+import {addDoc} from 'firebase/firestore';
+import {expensesRef} from '../config/firebase';
+import Loader from '../components/Loader';
 
-const AddExpense = () => {
+type Props = NativeStackScreenProps<RootStackParamList, Routes.TripExpenses>;
+
+const AddExpense = ({
+  route: {
+    params: {id, country, place},
+  },
+}: Props) => {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
 
-  const handleButtonPress = () => {
+  const handleButtonPress = async () => {
     if (title && amount && category) {
-      navigation.goBack();
+      setIsLoading(true);
+
+      const doc = await addDoc(expensesRef, {
+        title,
+        amount,
+        category,
+        tripId: id,
+      });
+
+      setIsLoading(false);
+      if (doc && doc.id) {
+        navigation.goBack();
+      }
     } else {
-      // trow an error
+      Snackbar.show({
+        text: 'Title, amount and category are required.',
+        backgroundColor: 'red',
+      });
     }
   };
   return (
@@ -94,13 +121,17 @@ const AddExpense = () => {
             </View>
           </View>
           <View className="py-8">
-            <TouchableOpacity
-              className="bg-green-500 w-full rounded-full p-3"
-              onPress={handleButtonPress}>
-              <Text className="capitalize text-white font-bold text-lg text-center">
-                add expense
-              </Text>
-            </TouchableOpacity>
+            {!isLoading ? (
+              <TouchableOpacity
+                className="bg-green-500 w-full rounded-full p-3"
+                onPress={handleButtonPress}>
+                <Text className="capitalize text-white font-bold text-lg text-center">
+                  add expense
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <Loader />
+            )}
           </View>
         </View>
       </ScrollView>

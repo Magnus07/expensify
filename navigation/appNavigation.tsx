@@ -63,10 +63,6 @@ export default function AppNavigation() {
             component={SignUp}
             options={{presentation: 'modal'}}
           />
-          <Stack.Screen name={Routes.Home} component={Home} />
-          <Stack.Screen name={Routes.AddExpense} component={AddExpense} />
-          <Stack.Screen name={Routes.AddTrip} component={AddTrip} />
-          <Stack.Screen name={Routes.TripExpenses} component={TripExpenses} />
         </Stack.Navigator>
       </NavigationContainer>
     );

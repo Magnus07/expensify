@@ -13,16 +13,32 @@ import BackIcon from '../components/BackIcon';
 import {useNavigation} from '@react-navigation/native';
 import {Routes} from '../navigation';
 import Loader from '../components/Loader';
+import Snackbar from 'react-native-snackbar';
+import {addDoc} from 'firebase/firestore';
+import {tripsRef} from '../config/firebase';
+import {useSelector} from 'react-redux';
+import {RootState} from '../redux/store';
 
 const AddTrip = () => {
   const [place, setPlace] = useState('');
   const [country, setCountry] = useState('');
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
+  const {user} = useSelector<RootState, string>(state => state.user);
 
-  const handleButtonPress = () => {
+  const handleButtonPress = async () => {
     if (place && country) {
-      navigation.navigate(Routes.Home);
+      setIsLoading(true);
+      const doc = await addDoc(tripsRef, {place, country, user: user.uid});
+      setIsLoading(false);
+      if (doc && doc.id) {
+        navigation.goBack();
+      }
+    } else {
+      Snackbar.show({
+        text: 'Place and country are required.',
+        backgroundColor: 'red',
+      });
     }
   };
   return (
@@ -63,7 +79,7 @@ const AddTrip = () => {
           </View>
         </View>
         <View className="py-8">
-          {isLoading ? (
+          {!isLoading ? (
             <TouchableOpacity
               className="bg-green-500 w-full rounded-full p-3"
               onPress={handleButtonPress}>

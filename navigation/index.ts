@@ -14,7 +14,7 @@ export enum Routes {
 export type RootStackParamList = {
   Home: undefined;
   Login: undefined;
-  AddExpense: undefined;
+  AddExpense: {place: string; country: string; id: string};
   AddTrip: undefined;
   TripExpenses: {place: string; country: string};
   Welcome: undefined;

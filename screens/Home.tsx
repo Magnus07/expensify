@@ -1,13 +1,20 @@
 import {View, Text, TouchableOpacity, Image, FlatList} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import ScreenWrapper from '../components/ScreenWrapper';
 import {colors} from '../theme';
 import randomImage from '../assets/images/randomImage';
 import EmptyList from '../components/EmptyList';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import {
+  CommonActions,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
 import {Routes} from '../navigation';
 import {signOut} from 'firebase/auth';
-import {auth} from '../config/firebase';
+import {auth, tripsRef} from '../config/firebase';
+import {getDocs, query, where} from 'firebase/firestore';
+import {useSelector} from 'react-redux';
+import {RootState} from '../redux/store';
 
 const items = [
   {
@@ -54,9 +61,20 @@ const items = [
 
 export default function Home() {
   const navigation = useNavigation();
+  const {uid} = useSelector<RootState, string>(state => state.user.user);
+  const [trips, setTrips] = useState([]);
+  const isFocused = useIsFocused();
 
-  const handleTripItemPress = (place: string, country: string) => {
-    navigation.navigate(Routes.TripExpenses, {place, country});
+  const handleTripItemPress = (id: string, place: string, country: string) => {
+    navigation.navigate(Routes.TripExpenses, {id, place, country});
+  };
+
+  const fetchTrips = async () => {
+    const q = query(tripsRef, where('user', '==', uid));
+    const querySnapshot = await getDocs(q);
+    const data = [];
+    querySnapshot.forEach(doc => data.push({...doc.data(), id: doc.id}));
+    setTrips(data);
   };
 
   const handleSignOut = async () => {
@@ -68,6 +86,12 @@ export default function Home() {
       }),
     );
   };
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchTrips();
+    }
+  }, [isFocused]);
 
   return (
     <ScreenWrapper className="flex-1">
@@ -100,7 +124,7 @@ export default function Home() {
         </View>
         <View className="h-[430px]">
           <FlatList
-            data={items}
+            data={trips}
             numColumns={2}
             keyExtractor={item => `${item.id}`}
             showsVerticalScrollIndicator={false}
@@ -115,7 +139,11 @@ export default function Home() {
               <TouchableOpacity
                 className="bg-white rounded-2xl p-3 mb-3 shadow-sm"
                 onPress={() =>
-                  handleTripItemPress(item.item.place, item.item.country)
+                  handleTripItemPress(
+                    item.item.id,
+                    item.item.place,
+                    item.item.country,
+                  )
                 }>
                 <View>
                   <Image source={randomImage()} className="w-36 h-36" />

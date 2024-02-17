@@ -1,63 +1,41 @@
 import {View, Text, TouchableOpacity, FlatList, Image} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import ScreenWrapper from '../components/ScreenWrapper';
 import {categoryBG, colors} from '../theme';
 import EmptyList from '../components/EmptyList';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {RootStackParamList, Routes} from '../navigation';
 import BackIcon from '../components/BackIcon';
 import {categories} from '../config';
 import ExpenseCard from '../components/ExpenseCard';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-
-const expenses = [
-  {
-    id: 1,
-    title: 'ate sandwich',
-    amount: 4,
-    category: 'food',
-  },
-  {
-    id: 2,
-    title: 'bought a jacket',
-    amount: 50,
-    category: 'shopping',
-  },
-  {
-    id: 3,
-    title: 'watched a movie',
-    amount: 100,
-    category: 'entertainment',
-  },
-  {
-    id: 4,
-    title: 'ate sandwich',
-    amount: 4,
-    category: 'food',
-  },
-  {
-    id: 5,
-    title: 'bought a jacket',
-    amount: 50,
-    category: 'shopping',
-  },
-  {
-    id: 6,
-    title: 'watched a movie',
-    amount: 100,
-    category: 'entertainment',
-  },
-];
+import {query, where, getDocs} from 'firebase/firestore';
+import {expensesRef, tripsRef} from '../config/firebase';
 
 type Props = NativeStackScreenProps<RootStackParamList, Routes.TripExpenses>;
 
 export default function TripExpenses({
   route: {
-    params: {country, place},
+    params: {id, country, place},
   },
 }: Props) {
   const navigation = useNavigation();
+  const [expenses, setExpenses] = useState([]);
+  const isFocused = useIsFocused();
 
+  const fetchExpenses = async () => {
+    const q = query(expensesRef, where('tripId', '==', id));
+    const querySnapshot = await getDocs(q);
+    const data = [];
+    querySnapshot.forEach(doc => data.push({...doc.data(), id: doc.id}));
+    setExpenses(data);
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchExpenses();
+    }
+  }, [isFocused]);
   return (
     <ScreenWrapper className="flex-1">
       <View className="flex py-5 space-y-3 px-3">
@@ -86,7 +64,7 @@ export default function TripExpenses({
             </Text>
             <TouchableOpacity
               className="p-2 px-3 bg-white border border-gray-200 rounded-full capitalize"
-              onPress={() => navigation.navigate(Routes.AddExpense)}>
+              onPress={() => navigation.navigate(Routes.AddExpense, {id})}>
               <Text className={colors.heading}>Add expense</Text>
             </TouchableOpacity>
           </View>
